@@ -11,33 +11,49 @@ Python class sample (in lib/nrjmobile.py) to get data mobile quotas form NRJMOBI
 # Sample/Usage :
 
 ```
-from lib.nrjmobile import nrjmobile
-import math
-def prettysize(size_bytes):
-   if size_bytes == 0:
-       return "0 B"
-   size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-   i = int(math.log(size_bytes, 1024))
-   s = round(size_bytes / (1024 ** i), 2)
-   return f"{s} {size_name[i]}"
+# Py_NRJMOBILE_INFO_CONSO Sample 0.2
+# Récupération du suivi de l'info conso "nrjmobile"
+from lib.nrjmobile import NrjMobile
+from lib.nrjmobile import NrjExceptions
 
 
 if __name__ == '__main__':
-  # login and password of mobile app...
-  login = "0612345678"
-  password = "CHANGE_ME"
-  
-  nrjconso_4g=nrjmobile(login=login, password=password, savecookies=True)
-  data_4g=nrjconso_4g.getDataUsage()
-  print("Il reste {a} sur {b}".format(a=prettysize(data_4g[3] - data_4g[2]), b=prettysize(data_4g[3])))
+
+    # dev :
+    login = "0601234567"
+    password = "change-me"
+    print("ligne 1")
+    # NrjExceptions
+
+    try:
+        nrj_ligne=NrjMobile(login=login, password=password, savecookies=True)
+        data_4g=nrj_ligne.getDataUsage()
+
+        print("data_4g=", data_4g)
+        print("data_4g.toJson()", data_4g.toJson())
+        print("data_4g.toDict()", data_4g.toDict())
+    except NrjExceptions.NrjLoginPasswordNotInitialisedError as e:
+        print("Error : " , e)
+        exit(1)
+    except NrjExceptions.NrjLoginBadCredentialError as e:
+        print("Error : " , e)
+        exit(1)
+
+    exit(0)
 ```
 
 Result : 
 ```
 result sample :
-data_4g= (True, datetime.datetime(2024, 2, 21, 0, 49), 13550621818, 1073741824000)
-Il reste 987.38 GB sur 1000.0 GB
+ligne 1
+data_4g= 2024-02-22T19:31:00, 12.95 GB/1000.0 GB
+data_4g.toJson() {"status": true, "date": "2024-02-22T19:31:00", "data_current": 13904956620, "data_max": 1073741824000}
+data_4g.toDict() {'status': True, 'date': datetime.datetime(2024, 2, 22, 19, 31), 'data_current': 13904956620, 'data_max': 1073741824000}
 
-data_4g= (True, datetime.datetime(2024, 2, 21, 0, 49), 0, 104857600)
-Il reste 100.0 MB sur 100.0 MB
+ligne 1
+data_4g= 2024-02-22T19:31:00, 0 B/100.0 MB
+data_4g.toJson() {"status": true, "date": "2024-02-22T19:31:00", "data_current": 0, "data_max": 104857600}
+data_4g.toDict() {'status': True, 'date': datetime.datetime(2024, 2, 22, 19, 31), 'data_current': 0, 'data_max': 104857600}
+
+
 ```
